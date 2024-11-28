@@ -32,20 +32,6 @@ foreach($automation->iterateProjectItems() as $projectItem) {
             echo "– Removing \"Future Work\" card from the board: $humanIssueName\n";
             continue;
         }
-
-        if ($automation->moveBackToInboxAfterAuthorsReply($projectItem)) {
-            echo "– Author replied – moving the card back to inbox: $humanIssueName\n";
-            continue;
-        }
-
-        if (
-            // TODO: Replace this with explicit permissions check if that is possible.
-            $projectItem['content']['repository']['nameWithOwner'] !== 'WordPress/wporg-theme-directory' &&
-            $automation->addNeedsAuthorReplyLabelToANewItemWithThatStatus($projectItem)
-        ) {
-            echo "– Adding \"Need Author's reply\" label to: $humanIssueName\n";
-            continue;
-        }
     } catch (Exception $e) {
         echo "Error processing card: $humanIssueName\n";
         echo $e->getMessage() . "\n";

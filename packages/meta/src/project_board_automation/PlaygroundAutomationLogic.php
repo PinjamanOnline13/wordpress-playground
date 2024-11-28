@@ -58,68 +58,10 @@ class PlaygroundAutomationLogic {
         $this->githubApi->removeItemFromProject($this->projectId, $projectItem['id']);
         return true;
     }
-
-    /**
-     * Find all cards with Status = "Needs author reply". If they do not
-     * have a "Needs author reply" label, add it.
-     */
-    public function addNeedsAuthorReplyLabelToANewItemWithThatStatus($projectItem)
-    {
-        if(
-            !$this->hasStatus($projectItem, $this->needsAuthorReplyStatusText) || 
-            $this->hasLabel($projectItem, $this->needsAuthorReplyLabelText)
-        ) {
-            return false;
-        }
-        $this->githubApi->addLabelByName(
-            $projectItem['content']['id'],
-            $this->needsAuthorReplyLabelText
-        );
-        return true;
-    }
     
     public function iterateProjectItems()
     {
         yield from $this->githubApi->iterateProjectItems($this->projectId);
-    }
-
-    /**
-     * Find all cards with "Needs author reply" label. If any comments have
-     * been added since the last time that label was added, remove the label 
-     * and clear the "Status" field.
-     */
-    public function moveBackToInboxAfterAuthorsReply($projectItem)
-    {
-        // Process items that have **either** the status or the label.
-        // The author could have replied after the status was set, but before
-        // we had a chance to add a label.
-        if(
-            !$this->hasStatus($projectItem, $this->needsAuthorReplyStatusText) && 
-            !$this->hasLabel($projectItem, $this->needsAuthorReplyLabelText)
-        ) {
-            return false;
-        }
-        
-        $issueOrPrId = $projectItem['content']['id'];
-        $result = $this->checkIfAuthorRepliedAfterLabelWasCreated($issueOrPrId);
-
-        if (!$result['author_replied']) {
-            return false;
-        }
-
-        // Only remove the label if there was a label in the first place.
-        // The author may have replied after the status was set, but before
-        // we had a chance to add a label.
-        if (null !== $result['label_id']) {
-            $this->githubApi->removeLabelById($issueOrPrId, $result['label_id']);
-        }
-        $this->githubApi->setFieldValueById(
-            $this->projectId,
-            $projectItem['id'],
-            $this->statusFieldId,
-            $this->githubIds['fields']['status']['options']['inbox']
-        );
-        return true;
     }
 
     private function hasStatus($projectItem, $statusText)
