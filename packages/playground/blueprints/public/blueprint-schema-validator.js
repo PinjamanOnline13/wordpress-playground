@@ -154,6 +154,7 @@ const schema11 = {
 		SupportedPHPVersion: {
 			type: 'string',
 			enum: [
+				'8.4',
 				'8.3',
 				'8.2',
 				'8.1',
@@ -1468,7 +1469,18 @@ const schema12 = {
 };
 const schema13 = {
 	type: 'string',
-	enum: ['8.3', '8.2', '8.1', '8.0', '7.4', '7.3', '7.2', '7.1', '7.0'],
+	enum: [
+		'8.4',
+		'8.3',
+		'8.2',
+		'8.1',
+		'8.0',
+		'7.4',
+		'7.3',
+		'7.2',
+		'7.1',
+		'7.0',
+	],
 };
 const schema14 = { type: 'string', const: 'wp-cli' };
 const schema15 = {
@@ -19235,6 +19247,7 @@ function validate11(
 													}
 													if (
 														!(
+															data9 === '8.4' ||
 															data9 === '8.3' ||
 															data9 === '8.2' ||
 															data9 === '8.1' ||
